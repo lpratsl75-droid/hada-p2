@@ -29,11 +29,13 @@ namespace hada_p2
         // Propiedad Columna
         public int Columna
         {
-            get { return valor; }
+            get { return this.Columna; }
             set
             {
-                minimo = 0;
-                maximo = 9;
+                if (value < 0 || value > 9)
+                {
+                    throw new ArgumentOutOfRangeException("Value está fuera de valor");
+                }
             }
         }
 
