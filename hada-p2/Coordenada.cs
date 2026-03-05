@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace hada_p2
+namespace Hada
 {
     internal class Coordenada
     {
 
-        private int columna;
+
 
         // Propiedad Fila
         public int Fila
@@ -59,7 +59,7 @@ namespace hada_p2
         public Coordenada(int fila, string columna)
         {
             Fila = fila;
-            // string columna
+            Columna = int.Parse(columna);
         }
 
         // Constructor pasado como parámetro otra coordenada
