@@ -65,30 +65,36 @@ namespace Hada
 
             // Inicializar casillas del tablero
             inicializarCasillasTablero();
-        }   
+        }
 
         // Método privado que inicializa las casillas del tablero
         private void inicializarCasillasTablero()
         {
-            for(int i = 0; i < tamTablero; i++)
+            // 1. Primero vaciamos el diccionario para evitar basura de ejecuciones previas
+            casillasTablero.Clear();
+
+            // 2. Rellenamos el área del tablero con AGUA
+            for (int i = 0; i < tamTablero; i++)
             {
-                for(int j = 0; j < tamTablero; j++)
+                for (int j = 0; j < tamTablero; j++)
                 {
-                    casillasTablero.Add(new Coordenada(i, j), "AGUA");
+                    casillasTablero[new Coordenada(i, j)] = "AGUA";
                 }
             }
 
-
-            // Colocar barcos
+            // 3. Colocamos los nombres de los barcos encima del AGUA
             foreach (Barco barco in barcos)
             {
                 foreach (Coordenada c in barco.CoordenadasBarco.Keys)
                 {
-                    this.casillasTablero.Add(c, barco.Nombre);
+                    // IMPORTANTE: Solo colocamos el barco si está dentro de los límites del tablero
+                    if (c.Fila < tamTablero && c.Columna < tamTablero)
+                    {
+                        // USAMOS CORCHETES [] para sobreescribir "AGUA" con el nombre del barco
+                        this.casillasTablero[c] = barco.Nombre;
+                    }
                 }
-
             }
-
         }
 
         // Método público que implementa la función de disparar
@@ -111,18 +117,25 @@ namespace Hada
         }
 
         // Método público que sirve para dibujar el tablero
-        public string DibujarTablero() // Modificar
+        public string DibujarTablero()
         {
-
             string cadenaTablero = "";
 
-            for(int i = 0; i < tamTablero; i++)
+            for (int i = 0; i < tamTablero; i++)
             {
-                for(int j = 0; j < tamTablero; j++)
+                for (int j = 0; j < tamTablero; j++)
                 {
-                    cadenaTablero += "[" + new Coordenada(i, j) + "]";
+                    // Creamos la coordenada de la casilla actual
+                    Coordenada c = new Coordenada(i, j);
+
+                    // Buscamos el valor en el diccionario (AGUA, NombreBarco o NombreBarco_T)
+                    if (casillasTablero.ContainsKey(c))
+                    {
+                        cadenaTablero += "[" + casillasTablero[c] + "]";
+                    }
                 }
-                
+
+                // Salto de línea al terminar cada fila
                 cadenaTablero += "\n";
             }
 
@@ -132,22 +145,48 @@ namespace Hada
         // Método público para devolver una cadena de texto con información
         public override string ToString()
         {
-            String cadenaInfo = "";
+            string cadenaInfo = "";
 
-            for(int i = 0; i < barcos.Count; i++)
+            // 1. Información detallada de cada uno de los Barcos
+            // Recorre la lista de barcos y utiliza el ToString de la clase Barco
+            foreach (Barco b in this.barcos)
             {
-                // corregir la cadenaInfo
-                cadenaInfo += "[" + barcos[i].Nombre + "] + DAÑOS: [" + barcos[i].CoordenadasBarco.Count + "]";
+                cadenaInfo += b.ToString() + "\n";
             }
 
+            cadenaInfo += "\n";
+
+            // 2. La lista de ‘Coordenadas Disparadas’
+            // Se muestran todas, incluso si están repetidas
+            cadenaInfo += "Coordenadas disparadas: ";
+            if (coordenadasDisparadas.Count > 0)
+            {
+                cadenaInfo += string.Join(" ", coordenadasDisparadas);
+            }
+
+            cadenaInfo += "\n";
+
+            // 3. La lista de ‘Coordenadas Tocadas’
+            // Solo aparecen las coordenadas únicas donde se ha impactado un barco
+            cadenaInfo += "Coordenadas tocadas: ";
+            if (coordenadasTocadas.Count > 0)
+            {
+                cadenaInfo += string.Join(" ", coordenadasTocadas);
+            }
+
+            cadenaInfo += "\n\n\n";
+
+            // 4. Representación visual del Tablero
+            cadenaInfo += "CASILLAS TABLERO\n";
+            cadenaInfo += "---------------\n";
+            cadenaInfo += DibujarTablero();
 
             return cadenaInfo;
-
         }
 
 
 
-       // Evento que se invoca cuando el barco está tocado
+        // Evento que se invoca cuando el barco está tocado
         private void cuandoEventoTocado(object sender, EventArgs e)
         {
             Barco b = (Barco)sender;
