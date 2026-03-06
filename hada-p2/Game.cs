@@ -20,9 +20,9 @@ namespace Hada
             List<Barco> barcos = new List<Barco>();
 
             // Crear mínimo tres barcos
-            Barco b1 = new Barco("Barco1", 1, 'a' , new Coordenada(0,0));
-            Barco b2 = new Barco("Barco2", 2, 'b' , new Coordenada(1,1));
-            Barco b3 = new Barco("Barco3", 3, 'c' , new Coordenada(2,2));
+            Barco b1 = new Barco("Barco1", 1, 'h' , new Coordenada(0,0));
+            Barco b2 = new Barco("Barco2", 1, 'h' , new Coordenada(1,1));
+            Barco b3 = new Barco("Barco3", 1, 'h' , new Coordenada(2,2));
 
             barcos.Add(b1);
             barcos.Add(b2);
@@ -33,30 +33,46 @@ namespace Hada
             tablero.eventoFinPartida += cuandoEventoFinPartida;
 
             string respuesta = "n";
-
-            do{
-                Console.WriteLine(tablero.DibujarTablero());
+            
+            while (respuesta != "S") 
+            {
+                Console.WriteLine(tablero.ToString());
                 Console.WriteLine("Introduce la coordenada a la que disparar FILA,COLUMNA ('S' para Salir): ");
                 respuesta = Console.ReadLine();
 
                 int x, y;
 
-
+                if(respuesta ==  "S")
+                {
+                    finPartida = true;
+                }
+                int hund = 0;
+                for (int i = 0; i < barcos.Count; i++) 
+                {
+                    if (barcos[i].hundido())
+                    {
+                        hund++;
+                    }
+                    if (barcos.Count == hund)
+                    {
+                        respuesta = "S";
+                        finPartida = true;
+                    }
+                 }
                 // Comprobar coordenada
                 if (respuesta.Length == 3 && int.TryParse(respuesta[0].ToString(), out x) && int.TryParse(respuesta[2].ToString(), out y))
                 {
                     Coordenada c = new Coordenada(x, y);
                     tablero.Disparar(c);
 
-                    respuesta = "s";
                 }
 
 
-            }while(respuesta != "s" || respuesta != "S");
+            }
         
 
             Console.WriteLine("FIN DEL JUEGO");
-            finPartida = true;
+            finPartida = true; 
         }
 
         // Constructor público por defecto
