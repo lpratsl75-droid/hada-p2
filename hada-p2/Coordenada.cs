@@ -9,33 +9,35 @@ namespace Hada
 {
     internal class Coordenada
     {
-
+        private int fila;
+        private int columna;
 
 
         // Propiedad Fila
         public int Fila
         {
-            get { return this.Fila; }
+            get { return fila; }
             set
             {
                 if (value < 0 || value > 9)
                 {
                     throw new ArgumentOutOfRangeException("Value está fuera de valor");
                 }
-
+                fila = value;
             }
         }
 
         // Propiedad Columna
         public int Columna
         {
-            get { return this.Columna; }
+            get { return columna; }
             set
             {
                 if (value < 0 || value > 9)
                 {
                     throw new ArgumentOutOfRangeException("Value está fuera de valor");
                 }
+                columna = value;
             }
         }
 
@@ -44,7 +46,7 @@ namespace Hada
         {
 
             Fila = 0;
-            Columna = 9;
+            Columna = 0;
 
         }
 
