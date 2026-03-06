@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hada;
 
-namespace hada_p2
+
+namespace Hada
 {
     internal class Tablero
     {
@@ -26,6 +28,8 @@ namespace hada_p2
                 {
                     throw new ArgumentOutOfRangeException("Value está fueta de rango");
                 }
+
+                tamTablero = value;
             }
         }
 
@@ -53,9 +57,10 @@ namespace hada_p2
             casillasTablero = new Dictionary<Coordenada, string>();
 
             // Inicializar los eventos tocado y hundido
-            for(int i = 0; i < casillasTablero.Count; i++){
-                casillasTablero[i].eventoTocado += cuandoEventoTocado;
-                casillasTablero[i].eventoHundido += cuandoEventoHundido; 
+            foreach (Barco b in barcos)
+            {
+                b.eventoTocado += cuandoEventoTocado;
+                b.eventoHundido += cuandoEventoHundido;
             }
 
             // Inicializar casillas del tablero
@@ -73,25 +78,17 @@ namespace hada_p2
                 }
             }
 
-            // Comrprobar esto
-            for(int i = 0; i < barcos.Count; i++)
-            {
-                Barco barco = barcos[i];
-                for(int j = 0; j < barco.Coordenada.Count; j++)
-                {
-                    casillasTabler[j] = barco.Nombre;
-                }
-            }
 
             // Colocar barcos
-            //foreach (Barco b in barcos)
-            //{
-            //    foreach (Coordenada c in b.Coordenadas)
-            //    {
-            //        casillasTablero[c] = b.Nombre;
-            //    }
-            //}
-  
+            foreach (Barco barco in barcos)
+            {
+                foreach (Coordenada c in barco.CoordenadasBarco.Keys)
+                {
+                    this.casillasTablero.Add(c, barco.Nombre);
+                }
+
+            }
+
         }
 
         // Método público que implementa la función de disparar
@@ -99,16 +96,16 @@ namespace hada_p2
         {
             if(c.Fila < 0 || c.Fila > 9 || c.Columna < 0 || c.Columna > 9)
             {
-                string cadenaError = "La coordenada (" + c.Fila "," + c.Columna + ") está fuera de las dimensiones del tablero.";
+                string cadenaError = "La coordenada (" + c.Fila + "," + c.Columna + ") está fuera de las dimensiones del tablero.";
                 throw new ArgumentOutOfRangeException(cadenaError);
             }
 
-            coordenadasDisparadas.add(c);
+            coordenadasDisparadas.Add(c);
 
             for(int i = 0; i < barcos.Count; i++)
             {
                 Barco b = barcos[i];
-                b.Disparar(c);
+                b.Disparo(c);
             }
 
         }
@@ -119,9 +116,9 @@ namespace hada_p2
 
             string cadenaTablero = "";
 
-            for(int i = 0; i < c.Fila; i++)
+            for(int i = 0; i < tamTablero; i++)
             {
-                for(int j = 0; j < c.Columna; j++)
+                for(int j = 0; j < tamTablero; j++)
                 {
                     cadenaTablero += "[" + new Coordenada(i, j) + "]";
                 }
@@ -139,7 +136,8 @@ namespace hada_p2
 
             for(int i = 0; i < barcos.Count; i++)
             {
-                cadenaInfo += "[" + barcos.Nombre + "] + DAÑOS: [" +  
+                // corregir la cadenaInfo
+                cadenaInfo += "[" + barcos[i].Nombre + "] + DAÑOS: [" + barcos[i].CoordenadasBarco.Count + "]";
             }
 
 
@@ -148,14 +146,14 @@ namespace hada_p2
         }
 
 
-        // Declarar el evento que se lanza cuando todos los barcos están hundidos
-        public event EventHandler<EventArgs> eventoFinPartida;
 
        // Evento que se invoca cuando el barco está tocado
         private void cuandoEventoTocado(object sender, EventArgs e)
         {
             Barco b = (Barco)sender;
-            Coordenada c = b.UltimaCoordenadaTocada;
+
+            TocadoArgs args = (TocadoArgs)e;
+            Coordenada c = args.coordenadaImpacto;
 
             if (!coordenadasTocadas.Contains(c))
                 coordenadasTocadas.Add(c);
@@ -181,7 +179,6 @@ namespace hada_p2
             }
         }
 
-        public
 
 
     }
