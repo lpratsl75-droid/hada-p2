@@ -88,7 +88,7 @@ namespace Hada
                 resultado = resultado + "[" + par.Key.ToString() + " :" + par.Value + "]";
             }
 
-            return resultado.;
+            return resultado;
         }
     }
 }
